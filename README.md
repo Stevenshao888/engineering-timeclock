@@ -1,50 +1,23 @@
-# Welcome to your Expo app 👋
+# Employee Attendance App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Folder Structure
 
-## Get started
+- `/src`
+  - `/components`: Reusable UI components.
+  - `/screens`: Screen components. Note: Expo Router uses `/app` for file-based routing. `src/screens` can be used for logic or components imported by `/app`.
+  - `/services`: API and backend services (Supabase configuration in `supabase.ts`).
+  - `/types`: TypeScript type definitions.
+- `/app`: Expo Router file-based routing directory.
 
-1. Install dependencies
+## Dependencies
 
-   ```bash
-   npm install
-   ```
+- **Supabase**: Backend (Auth, DB).
+- **NativeWind**: Tailwind CSS styling.
+- **Expo Location**: GPS tracking.
+- **Expo Camera**: Photo proof.
+- **Expo Router**: Navigation.
 
-2. Start the app
+## Setup
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. Add Supabase keys in `src/services/supabase.ts`.
+2. Run `npm run ios` or `npm run android`.
