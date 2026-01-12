@@ -1,0 +1,10 @@
+{
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ],
+    "framework": "create-react-app",
+    "buildCommand": "npx expo export -p web"
+}
