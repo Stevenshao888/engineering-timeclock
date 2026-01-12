@@ -227,7 +227,8 @@ export default function Dashboard() {
   const [empFormWage, setEmpFormWage] = useState(0);
   const [empFormSiteId, setEmpFormSiteId] = useState('');
 
-
+  const [empFormEmail, setEmpFormEmail] = useState('');
+  const [empFormPassword, setEmpFormPassword] = useState('');
   // --- Logic: Attendance Modal ---
   const openCreateModal = () => {
     setIsCreateMode(true);
@@ -295,6 +296,8 @@ export default function Dashboard() {
     setEmpFormSalaryType(p.salary_type || 'daily');
     setEmpFormWage(p.salary_type === 'monthly' ? (p.monthly_wage || 0) : (p.daily_wage || 0));
     setEmpFormSiteId(p.default_site_id || '');
+    setEmpFormEmail('');
+    setEmpFormPassword('');
     setIsEmpModalOpen(true);
   };
   const handleSaveEmployee = async () => {
@@ -306,7 +309,38 @@ export default function Dashboard() {
         monthly_wage: empFormSalaryType === 'monthly' ? empFormWage : 0
       };
       await supabase.from('profiles').update(updates).eq('id', empFormId);
+
+      if (empFormEmail || empFormPassword) {
+        const res = await fetch('/api/admin/users', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: empFormId,
+            email: empFormEmail || undefined,
+            password: empFormPassword || undefined
+          })
+        });
+        if (!res.ok) throw new Error((await res.json()).error);
+        alert('Updates saved (Profile & Credentials)!');
+      } else {
+        alert('Updates saved (Profile only)!');
+      }
+
       setIsEmpModalOpen(false); fetchData();
+    } catch (e: any) { alert(e.message); }
+  };
+
+  const handleDeleteEmployee = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete user "${name}"? This cannot be undone and they will lose access immediately.`)) return;
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: id }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error);
+      alert('User deleted successfully');
+      fetchData();
     } catch (e: any) { alert(e.message); }
   };
 
@@ -504,7 +538,10 @@ export default function Dashboard() {
                           {site ? `📍 ${site.name}` : <span className="text-gray-400">Unbound</span>}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button onClick={() => openEmpEditModal(p)} className="text-indigo-600 border-2 border-indigo-200 px-4 py-1 rounded-lg font-bold hover:bg-indigo-50 hover:text-indigo-800 transition-colors">設定 (Edit)</button>
+                          <div className="flex gap-2">
+                            <button onClick={() => openEmpEditModal(p)} className="text-indigo-600 border-2 border-indigo-200 px-4 py-1 rounded-lg font-bold hover:bg-indigo-50 hover:text-indigo-800 transition-colors">設定 (Edit)</button>
+                            <button onClick={() => handleDeleteEmployee(p.id, p.full_name)} className="text-red-600 border-2 border-red-200 px-4 py-1 rounded-lg font-bold hover:bg-red-50 hover:text-red-800 transition-colors">刪除 (Delete)</button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -746,6 +783,19 @@ export default function Dashboard() {
               <h2 className="text-3xl font-black mb-6 text-gray-900">{empFormName}</h2>
 
               <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4 bg-indigo-50 p-4 rounded-lg border-2 border-indigo-100">
+                  <div className="col-span-2">
+                    <p className="text-xs font-bold text-gray-500 mb-2">UPDATE CREDENTIALS (LEAVE BLANK TO KEEP)</p>
+                  </div>
+                  <div>
+                    <label className="block font-black text-gray-900 mb-1">New Email</label>
+                    <input type="email" placeholder="New Email" value={empFormEmail} onChange={e => setEmpFormEmail(e.target.value)} className="w-full border-2 border-gray-300 p-2 rounded text-black font-bold" />
+                  </div>
+                  <div>
+                    <label className="block font-black text-gray-900 mb-1">New Password</label>
+                    <input type="text" placeholder="New Password" value={empFormPassword} onChange={e => setEmpFormPassword(e.target.value)} className="w-full border-2 border-gray-300 p-2 rounded text-black font-bold" />
+                  </div>
+                </div>
                 <div className="bg-gray-100 p-5 rounded-lg border-2 border-gray-300">
                   <div className="flex gap-6 mb-4">
                     <label className="flex items-center gap-2 font-bold text-gray-900 text-lg cursor-pointer">
